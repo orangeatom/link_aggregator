@@ -1,0 +1,4 @@
+*.pyc
+cert
+venv
+config.yaml
