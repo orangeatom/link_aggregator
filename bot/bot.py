@@ -53,11 +53,12 @@ def check_link(msg):
         response = "found: \n"
         if links:
             for link in links:
-                response += f"[{link['title']}]({link['url']}) tags: {link['tags']}"
+                response += f"🍕 [{link['title']}]({link['url']}) tags: {link['tags']}\n"
             bot.send_message(
                 user.user_id,
                 response,
-                disable_web_page_preview=True,parse_mode="MARKDOWN"
+                disable_web_page_preview=True,
+                parse_mode="MARKDOWN"
             )
         else:
             bot.send_message(
