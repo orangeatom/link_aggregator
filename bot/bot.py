@@ -1,9 +1,11 @@
+from urllib.parse import urlparse
+
 import flask
 from telebot import TeleBot, types
 
 from config import TOKEN, server, db
 
-from aggregator import check_message
+from aggregator import User
 
 bot = TeleBot(TOKEN)
 app = flask.Flask(__name__)
@@ -27,12 +29,19 @@ def web():
 
 @bot.message_handler(commands=['start'])
 def hello(msg):
-    pass
+    # init user and create document of this user in database
+    User(msg)
 
 
 @bot.message_handler(content_types=['text'])
 def check_link(msg):
-    pass
+    user = User(msg)
+    splitted_text = msg.text.split()
+    url = urlparse(splitted_text[0])
+    if urlparse(splitted_text[0]).netloc:
+        user.create_link(splitted_text[0], splitted_text[1:])
+    else:
+        user.get_links_by_tags(splitted_text)
 
 
 if __name__ == "__main__":

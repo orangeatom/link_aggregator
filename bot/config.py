@@ -18,7 +18,7 @@ server = server_template(
     host = config['server']['host'],
     cert = config['server']['cert'],
     pkey = config['server']['pkey'],
-    port  = config['server']['port']
+    port  = config['server']['port'],
     )
 
 
