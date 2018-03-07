@@ -30,16 +30,17 @@ def web():
 @bot.message_handler(commands=['start'])
 def hello(msg):
     # init user and create document of this user in database
-    User(msg)
+    User(msg.chat.id)
 
 
 @bot.message_handler(content_types=['text'])
 def check_link(msg):
-    user = User(msg)
+    user = User(msg.chat.id)
     splitted_text = msg.text.split()
-    url = urlparse(splitted_text[0])
     if urlparse(splitted_text[0]).netloc:
-        user.create_link(splitted_text[0], splitted_text[1:])
+        bot.send_message(
+            user.user_id,
+            user.create_link(splitted_text[0], splitted_text[1:]))
     else:
         user.get_links_by_tags(splitted_text)
 

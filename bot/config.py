@@ -4,7 +4,6 @@ import yaml
 
 config = yaml.load(open('config.yaml', 'r'))
 
-
 TOKEN = config['bot']['token']
 
 server_template = namedtuple("server", ['host',

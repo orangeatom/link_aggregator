@@ -2,3 +2,4 @@
 cert
 venv
 config.yaml
+.vscode

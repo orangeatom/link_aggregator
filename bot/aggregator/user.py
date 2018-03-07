@@ -1,5 +1,8 @@
-import pymongo
 from urllib.parse import urlparse
+from lxml.html import fromstring
+
+import requests
+import pymongo
 
 from config import db
 
@@ -24,14 +27,21 @@ class User:
         self.chat_id = user_id
     
     def create_link(self, url, tags):
-        link_db.insert_one(
-            {
-                "user_id": self.user_id,
-                "url": url,
-                "tags": tags
-            }
-        )
-        pass
+        content = requests.get(url).content
+        title = fromstring(content).findtext(".//title").split("/")[0]
+        print(title)
+        if link_db.find_one({"url": url}):
+            return self._update_tags_of_link(url, tags)
+        else:
+            link_db.insert_one(
+                {
+                    "user_id": self.user_id,
+                    "url": url,
+                    "tags": tags,
+                    "title": title
+                }
+            )
+            return "link created"
     
     def get_links_by_tags(self, tags):
         response = link_db.find(
@@ -39,6 +49,7 @@ class User:
                 'tags': {"$all": tags},
                 "user_id": self.user_id
             })
+        return response
 
     def delete_link(self, url):
         l = link_db.find_one_and_delete(
@@ -53,12 +64,14 @@ class User:
             response = "not found."
         return response
 
-    def update_tags_of_link(self, url, new_tags):
-        link = link_db.find_one_and_update(
-            {
+    def _update_tags_of_link(self, url, new_tags):
+        link_db.find_one_and_update(
+            {   
+                "url": url,
                 "user_id": self.user_id,
-                "tags": {"$all": new_tags}
-                }
+            },
+            {
+               "$set":{"tags":  new_tags}
+            }
             )
-        return link
-
+        return f"updated {new_tags}"
