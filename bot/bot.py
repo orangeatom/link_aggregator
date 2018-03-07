@@ -41,8 +41,29 @@ def check_link(msg):
         bot.send_message(
             user.user_id,
             user.create_link(splitted_text[0], splitted_text[1:]))
+    elif msg.text.startswith("del"):
+        if urlparse(splitted_text[1]).netloc:
+            response = user.delete_link(splitted_text[1])
+            bot.send_message(
+                user.chat_id,
+                response
+            )
     else:
-        user.get_links_by_tags(splitted_text)
+        links = user.get_links_by_tags(splitted_text)
+        response = "found: \n"
+        if links:
+            for link in links:
+                response += f"[{link['title']}]({link['url']}) tags: {link['tags']}"
+            bot.send_message(
+                user.user_id,
+                response,
+                disable_web_page_preview=True,parse_mode="MARKDOWN"
+            )
+        else:
+            bot.send_message(
+                user.user_id,
+                "not found")
+            
 
 
 if __name__ == "__main__":
