@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 import flask
 from telebot import TeleBot, types
 
-from config import TOKEN, server, db
+from config import TOKEN, server
 
 from aggregator import User
 
@@ -11,10 +11,12 @@ bot = TeleBot(TOKEN)
 app = flask.Flask(__name__)
 APP_URL = f"https://{server.public_host}:{server.port}"
 
+
 # base skeleton of bot app
 @app.route('/', methods=['GET', 'HEAD'])
 def index():
     return ''
+
 
 @app.route(f"/{TOKEN}", methods=['POST'])
 def web():
@@ -31,6 +33,10 @@ def web():
 def hello(msg):
     # init user and create document of this user in database
     User(msg.chat.id)
+    bot.send_message(
+        msg.chat.id,
+        "hello, I help you to aggregate your link"
+    )
 
 
 @bot.message_handler(content_types=['text'])
@@ -41,6 +47,7 @@ def check_link(msg):
         bot.send_message(
             user.user_id,
             user.create_link(splitted_text[0], splitted_text[1:]))
+
     elif msg.text.startswith("del"):
         if urlparse(splitted_text[1]).netloc:
             response = user.delete_link(splitted_text[1])
@@ -48,23 +55,25 @@ def check_link(msg):
                 user.chat_id,
                 response
             )
+
     else:
         links = user.get_links_by_tags(splitted_text)
         response = "found: \n"
         if links:
             for link in links:
-                response += f"🍕 [{link['title']}]({link['url']}) tags: {link['tags']}\n"
+                response += f"🍕 [{link['title']}]({link['url']})"
+                " tags: {link['tags']}\n"
             bot.send_message(
                 user.user_id,
                 response,
                 disable_web_page_preview=True,
                 parse_mode="MARKDOWN"
             )
+
         else:
             bot.send_message(
                 user.user_id,
                 "not found")
-            
 
 
 if __name__ == "__main__":

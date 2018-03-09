@@ -13,15 +13,15 @@ server_template = namedtuple("server", ['host',
                                         'public_host'])
 
 server = server_template(
-    public_host = config['server']['public_host'],
-    host = config['server']['host'],
-    cert = config['server']['cert'],
-    pkey = config['server']['pkey'],
-    port  = config['server']['port'],
+    public_host=config['server']['public_host'],
+    host=config['server']['host'],
+    cert=config['server']['cert'],
+    pkey=config['server']['pkey'],
+    port=config['server']['port'],
     )
 
 
-db_template = namedtuple("db", ['host','port'])
+db_template = namedtuple("db", ['host', 'port'])
 
 db = db_template(
     config['db']['host'],

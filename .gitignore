@@ -3,3 +3,4 @@ cert
 venv
 config.yaml
 .vscode
+.pytest_cache
