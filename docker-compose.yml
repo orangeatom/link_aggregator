@@ -1,14 +1,18 @@
 version: "2"
 
 services: 
-   mongo:
-     container_name: link_aggregator_mongo
-     image: "mongo:3.6.2"
-     volumes: 
-       - mongo_data:/data/db
-     ports:
-       - 27017:27017
+  mongo:
+    image: "mongo:3.6.2"
+    volumes: 
+    - mongo_data:/data/db
+    ports:
+    - 27017:27017
 
+  bot:
+    image: link_aggregator
+    build: .
+    ports: 
+    - 8443:8443 
 
 volumes: 
   mongo_data:
