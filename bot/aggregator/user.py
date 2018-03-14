@@ -26,10 +26,18 @@ class User:
         self.user_id = user_id
         self.chat_id = user_id
 
+    def __get_title(self, page):
+        if "text/html" in page.headers["content-type"]:
+            title = fromstring(
+            page.content).findtext(".//title").split("/")[0]
+        else:
+            title = page.url.rsplit("/", 1)[1]
+        return title
+
     def create_link(self, url, tags):
-        content = requests.get(url).content
-        title = fromstring(content).findtext(".//title").split("/")[0]
-        print(title)
+        page_data = requests.get(url)
+        title = self.__get_title(page_data)
+
         if link_db.find_one({"url": url}):
             return self._update_tags_of_link(url, tags)
         else:
@@ -65,13 +73,17 @@ class User:
         return response
 
     def _update_tags_of_link(self, url, new_tags):
+        page_data = requests.get(url)
+        title = self.__get_title(page_data)
+
         link_db.find_one_and_update(
             {
                 "url": url,
                 "user_id": self.user_id,
             },
             {
-               "$set": {"tags":  new_tags}
+               "$set": {"tags":  new_tags,
+               "title": title}
             }
             )
         return f"updated {new_tags}"

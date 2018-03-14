@@ -61,8 +61,9 @@ def check_link(msg):
         response = "found: \n"
         if links:
             for link in links:
-                response += f"🍕 [{link['title']}]({link['url']})"
-                " tags: {link['tags']}\n"
+                response += f"🍕 [{link['title']}]({link['url']})" \
+                    f" tags: *{link['tags']}*\n"
+
             bot.send_message(
                 user.user_id,
                 response,
