@@ -1,5 +1,6 @@
-from lxml.html import fromstring
+import re
 
+from lxml.html import fromstring
 import requests
 import pymongo
 
@@ -29,7 +30,7 @@ class User:
     def __get_title(self, page):
         if "text/html" in page.headers["content-type"]:
             title = fromstring(
-            page.content).findtext(".//title").split("/")[0]
+                page.content).findtext(".//title").split("/")[0]
         else:
             title = page.url.rsplit("/", 1)[1]
         return title
@@ -52,6 +53,7 @@ class User:
             return "link created"
 
     def get_links_by_tags(self, tags):
+        tags = [re.compile("^" + tag + "$", re.IGNORECASE) for tag in tags]
         response = link_db.find(
             {
                 'tags': {"$all": tags},
@@ -82,8 +84,10 @@ class User:
                 "user_id": self.user_id,
             },
             {
-               "$set": {"tags":  new_tags,
-               "title": title}
+               "$set": {
+                   "tags":  new_tags,
+                   "title": title
+                   }
             }
             )
         return f"updated {new_tags}"
