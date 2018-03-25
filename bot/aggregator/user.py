@@ -52,11 +52,13 @@ class User:
             return "link created"
 
     def get_links_by_tags(self, tags):
-        tags = [re.compile("^" + tag + "$", re.IGNORECASE) for tag in tags]
         response = link_db.find(
             {
                 'tags': {"$all": tags},
                 "user_id": self.user_id
+            }).collation({
+                "locale":"en",
+                "strength": 2,
             })
         return response
 
