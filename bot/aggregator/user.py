@@ -30,7 +30,7 @@ class User:
     def __get_title(self, page):
         if "text/html" in page.headers["content-type"]:
             title = fromstring(
-                page.content).findtext(".//title").split("/")[0]
+                page.content.decode('utf-8')).findtext(".//title").split("/")[0]
         else:
             title = page.url.rsplit("/", 1)[1]
         return title
@@ -38,7 +38,6 @@ class User:
     def create_link(self, url, tags):
         page_data = requests.get(url)
         title = self.__get_title(page_data)
-
         if link_db.find_one({"url": url}):
             return self._update_tags_of_link(url, tags)
         else:
