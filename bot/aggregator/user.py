@@ -1,5 +1,3 @@
-import re
-
 from lxml.html import fromstring
 import requests
 import pymongo
@@ -30,7 +28,8 @@ class User:
     def __get_title(self, page):
         if "text/html" in page.headers["content-type"]:
             title = fromstring(
-                page.content.decode('utf-8')).findtext(".//title").split("/")[0]
+                page.content.decode('utf-8')
+                ).findtext(".//title").split("/")[0]
         else:
             title = page.url.rsplit("/", 1)[1]
         return title
@@ -57,7 +56,7 @@ class User:
                 'tags': {"$all": tags},
                 "user_id": self.user_id
             }).collation({
-                "locale":"en",
+                "locale": "en",
                 "strength": 2,
             })
         return response
