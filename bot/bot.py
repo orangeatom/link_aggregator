@@ -6,10 +6,9 @@ from telebot import TeleBot, types
 from config import TOKEN, server
 from aggregator import User
 
-
 bot = TeleBot(TOKEN)
 app = flask.Flask(__name__)
-APP_URL = f"https://{server.public_host}:{server.port}/"
+APP_URL = f"https://{server.public_host}:{server.port}"
 
 # content messages
 HELLO_MESSAGE = """del + url - delete  url
@@ -24,7 +23,7 @@ def index():
     return ''
 
 
-@app.route(f"/{TOKEN}/", methods=['POST'])
+@app.route(f"/{TOKEN}", methods=['POST'])
 def web():
     if flask.request.headers.get('content-type') == 'application/json':
         json_string = flask.request.get_data().decode('utf-8')
@@ -62,11 +61,12 @@ def check_link(msg):
 
     else:
         links = user.get_links_by_tags(splitted_text)
-        response = "found: \n"
-        if links:
+
+        if links.count():
+            response = "result: \n"
             for link in links:
                 response += f"🍕 [{link['title']}]({link['url']})" \
-                    f" tags: *{link['tags']}*\n"
+                            f" tags: *{link['tags']}*\n"
             bot.send_message(
                 user.user_id,
                 response,
