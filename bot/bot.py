@@ -4,12 +4,18 @@ import flask
 from telebot import TeleBot, types
 
 from config import TOKEN, server
-
 from aggregator import User
+
 
 bot = TeleBot(TOKEN)
 app = flask.Flask(__name__)
-APP_URL = f"https://{server.public_host}:{server.port}"
+APP_URL = f"https://{server.public_host}:{server.port}/"
+
+# content messages
+HELLO_MESSAGE = """del + url - delete  url
+url + some text -add/change url
+some text - search by tags
+"""
 
 
 # base skeleton of bot app
@@ -18,24 +24,22 @@ def index():
     return ''
 
 
-@app.route(f"/{TOKEN}", methods=['POST'])
+@app.route(f"/{TOKEN}/", methods=['POST'])
 def web():
     if flask.request.headers.get('content-type') == 'application/json':
         json_string = flask.request.get_data().decode('utf-8')
         update = types.Update.de_json(json_string)
         bot.process_new_updates([update])
         return ''
-    else:
-        flask.abort(403)
 
 
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start', 'help'])
 def hello(msg):
     # init user and create document of this user in database
     User(msg.chat.id)
     bot.send_message(
         msg.chat.id,
-        "hello, I help you to aggregate your link"
+        HELLO_MESSAGE
     )
 
 
@@ -63,7 +67,6 @@ def check_link(msg):
             for link in links:
                 response += f"🍕 [{link['title']}]({link['url']})" \
                     f" tags: *{link['tags']}*\n"
-
             bot.send_message(
                 user.user_id,
                 response,
