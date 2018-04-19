@@ -29,7 +29,7 @@ class User:
         if "text/html" in page.headers["content-type"]:
             title = fromstring(
                 page.content.decode('utf-8')
-                ).findtext(".//title").split("/")[0]
+                ).findtext(".//title").split("/")[0].strip()
         else:
             title = page.url.rsplit("/", 1)[1].strip()
         return title
