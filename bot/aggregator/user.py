@@ -31,7 +31,7 @@ class User:
                 page.content.decode('utf-8')
                 ).findtext(".//title").split("/")[0]
         else:
-            title = page.url.rsplit("/", 1)[1]
+            title = page.url.rsplit("/", 1)[1].strip()
         return title
 
     def create_link(self, url, tags):
