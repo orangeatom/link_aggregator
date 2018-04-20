@@ -25,10 +25,11 @@ class User:
         self.user_id = user_id
         self.chat_id = user_id
 
-    def __get_title(self, page):
+    @staticmethod
+    def __get_title(page):
         if "text/html" in page.headers["content-type"]:
             title = fromstring(
-                page.content.decode('utf-8')
+                page.content.decode(page.encoding)
                 ).findtext(".//title").split("/")[0].strip()
         else:
             title = page.url.rsplit("/", 1)[1].strip()
