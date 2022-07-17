@@ -1,0 +1,21 @@
+version: "2"
+
+services:
+  postgres:
+    image: postgres:13.3
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment: 
+      - POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-example}
+
+  bot:
+    image: link_aggregator
+    build: .
+    ports: 
+    - 9876:9876 
+    restart: on-failure
+
+volumes: 
+  pg_data:

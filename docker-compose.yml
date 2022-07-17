@@ -1,12 +1,13 @@
 version: "2"
 
-services: 
-  mongo:
-    image: "mongo:3.6.2"
-    volumes: 
-    - mongo_data:/data/db
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      - POSTGRES_PASSWORD=test_pwd
+      - POSTGRES_USER=link_aggregator
     ports:
-    - 27017:27017
+      - 5432:5432
 
   bot:
     image: link_aggregator
@@ -14,6 +15,5 @@ services:
     ports: 
     - 8443:8443 
     restart: on-failure
-
-volumes: 
-  mongo_data:
+    env_file:
+      - .config
